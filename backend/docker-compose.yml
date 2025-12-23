@@ -1,0 +1,33 @@
+services:
+  backend:
+    image: backend:v1
+    environment:
+      DATABASE_URL: postgres://user:password@bdd:5432/globalbank
+      REPLICA_NAME: "{{.Service.Name}}.{{.Task.Slot}}"
+    networks:
+      - bank-net
+        #    ports:
+        #      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+        #      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      replicas: 10
+      update_config:
+        parallelism: 2          # Update 2 containers at a time
+        delay: 20s              # Wait 10s between batches
+        order: start-first      # Start new container BEFORE stopping old (Zero Downtime)
+        failure_action: rollback # If update fails, automatically go back to old version
+        monitor: 15s            # Duration to monitor a container for failure after start
+      rollback_config:
+        parallelism: 5
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+networks:
+  bank-net:
+    driver: overlay

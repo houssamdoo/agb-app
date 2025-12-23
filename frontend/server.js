@@ -6,8 +6,8 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
-const BACKEND_URL = 'http://backend-api:3000/api/banking/account';
-const TRANSFER_URL = 'http://backend-api:3000/api/banking/transfer';
+const BACKEND_URL = 'http://backend:3000/api/banking/account';
+const TRANSFER_URL = 'http://backend:3000/api/banking/transfer';
 
 app.get('/', async (req, res) => {
     try {

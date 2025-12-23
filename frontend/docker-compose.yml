@@ -1,0 +1,26 @@
+services:
+  frontend:
+    image: frontend:v1
+    environment:
+      REPLICA_NAME: "{{.Service.Name}}.{{.Task.Slot}}"
+        #    ports:
+        #      - "8080:8080"
+    networks:
+      - bank-net
+    healthcheck:
+      #test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      replicas: 10
+      update_config:
+        parallelism: 2
+        delay: 15s
+        order: start-first
+        failure_action: rollback
+
+networks:
+  bank-net:
+    driver: overlay
