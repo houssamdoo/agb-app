@@ -10,7 +10,7 @@ docker image build -t `<nome de l'image>`
 ```
 
 ## deploy a service on a stack
-** create a stack with services
+**create a stack with services**
 ```bash
 docker stack deploy --compose-file docker-compose.yaml <nom de stack>
 ```
